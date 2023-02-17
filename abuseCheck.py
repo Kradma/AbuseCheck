@@ -81,21 +81,23 @@ with open(file_name) as fp:
 			print("[ERROR] La siguiente IP no se puede consultar: " + line)
 			continue
 		
+        try:
+		    if decodedResponse.get("data").get("abuseConfidenceScore") > MIN_REP:
+		        with open(os.path.splitext(file_name)[0]+'_complete.txt', 'a') as writer:
+				    writer.write(json.dumps(decodedResponse, sort_keys=True, indent=4))
+                    print(json.dumps(decodedResponse, sort_keys=True, indent=4))
+        except Exception:
+            traceback.print_exc()
 
-		try:	
-			if decodedResponse.get("data").get("abuseConfidenceScore") > MIN_REP:
-				with open(os.path.splitext(file_name)[0]+'_complete.txt', 'a') as writer:
-					writer.write(json.dumps(decodedResponse, sort_keys=True, indent=4))
-				with open(os.path.splitext(file_name)[0]+'_summary.txt', 'a') as writer2:
-					writer2.write(str(decodedResponse.get("data").get("ipAddress")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("abuseConfidenceScore")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("countryCode")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("usageType")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("isp")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("domain")) + ",")
-					writer2.write(str(decodedResponse.get("data").get("totalReports")) + "\n")
-				
-				print(json.dumps(decodedResponse, sort_keys=True, indent=4))
+        try:	
+			with open(os.path.splitext(file_name)[0]+'_summary.txt', 'a') as writer2:
+				writer2.write(str(decodedResponse.get("data").get("ipAddress")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("abuseConfidenceScore")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("countryCode")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("usageType")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("isp")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("domain")) + ",")
+				writer2.write(str(decodedResponse.get("data").get("totalReports")) + "\n")
 		except Exception:
 			traceback.print_exc()
 			continue
